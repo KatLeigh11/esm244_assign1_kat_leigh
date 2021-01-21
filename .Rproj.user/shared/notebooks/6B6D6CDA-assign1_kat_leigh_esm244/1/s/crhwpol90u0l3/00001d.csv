@@ -1,4 +1,0 @@
-"0",""
-"0","combo_plot_final <- combo_plots + plot_annotation("
-"0","  title = 'Counts of mountain yellow-legged frogs (Rana muscosa) between 1995 and 2002',"
-"0","  caption = str_wrap('Top plot includes all lifestages except Egg Mass, and all lake locations. Lower plot contains only adult and subadult lifestages, and only counts for lakes where Rana muscosa are most abundant (i.e. where the total count at a lake exceeded 11 individuals). Lakes are given reference ID numbers in order to preserve confidentiality.', 100))"

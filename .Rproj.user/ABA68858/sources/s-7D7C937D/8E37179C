@@ -3,7 +3,7 @@
     "path": "~/UCSB/esm244_assign1_kat_leigh/esm244_ass1/assign1_kat_leigh_esm244.Rmd",
     "project_path": "esm244_ass1/assign1_kat_leigh_esm244.Rmd",
     "type": "r_markdown",
-    "hash": "1867203965",
+    "hash": "955620512",
     "contents": "",
     "dirty": false,
     "created": 1611202727282.0,
@@ -11,16 +11,16 @@
     "relative_order": 1,
     "properties": {
         "tempName": "Untitled1",
-        "cursorPosition": "121,0",
-        "scrollLine": "120",
+        "cursorPosition": "126,102",
+        "scrollLine": "126",
         "last_setup_crc32": "7D7C937D5377f6b3"
     },
     "folds": "",
-    "lastKnownWriteTime": 1611257147,
+    "lastKnownWriteTime": 1611258353,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1611257147928,
+    "last_content_update": 1611258353376,
     "read_only": false,
     "read_only_alternatives": []
 }
