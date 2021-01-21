@@ -52,7 +52,7 @@ summary_frogs <- filter_frogs %>%
 frog_plot <- ggplot(summary_frogs, aes(x= year, y= count))+
   geom_col(fill = "salmon")+
   facet_wrap(~amphibian_life_stage)+
-  labs(title = "Counts of mountain yellow-legged frog (Rana muscosa) per year for each lifestage",
+  labs(title = "Total counts across all lae locations per year for each lifestage",
        x= "Year",
        y= "Count")+
   theme_minimal()
@@ -123,13 +123,37 @@ plot_lakes <- lake_graph_data_ordered %>%
                    pattern = 'stripe',
                    fill    = 'white',
                    color = 'black')+
-  labs(title= "Total counts of adult and subadult mountain yellow-legged frogs (Rana muscosa)\nobserved between 1995 and 2002 in lakes with highest frog abundance",
+  labs(title= str_wrap("Total counts of adults and subadults in lakes with highest frog abundance", 50),
        x= "Lake",
-       y= "Count")+
+       y= "Count",
+       pattern_density= "Life Stage",
+       pattern_color= 'Lake ID Number')+
   theme_minimal()+
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank(), plot.title = element_text(size=14), legend.box = "horizontal")+
+  guides(pattern_density = "legend", pattern_fill = "none")
 
 plot_lakes
   
+```
+
+Combine your two graphs into a single compound figure using the {patchwork} package. Add a finalized figure caption that appears below the compound figure in your knitted html. Note: You might realize once you combine your graphs into a single compound figure, you need to update the formatting (e.g. move legends or instead directly label, etc.). You should customize as necessary to make it a professional final output.
+
+For Task 1, your knitted html should show: 
+
+Your organized code, with clear subsections and any useful descriptive text / annotation (e.g. if you wanted to highlight this as a code example for a prospective employer)
+Your finalized compound figure, with a figure caption
+Make sure to suppress any messages & warnings
+
+```{r}
+
+combo_plots <- frog_plot / plot_lakes
+
+combo_plot_final <- combo_plots + plot_annotation(
+  title = 'Counts of mountain yellow-legged frogs (Rana muscosa) between 1995 and 2002',
+  caption = str_wrap('Top plot includes all lifestages except Egg Mass, and all lake locations. Lower plot contains only adult and subadult lifestages, and only counts for lakes where Rana muscosa are most abundant (i.e. where the total count at a lake exceeded 11 individuals). Lakes are given reference ID numbers in order to preserve confidentiality.', 130))
+
+combo_plot_final
+  
+
 ```
 
