@@ -1,0 +1,164 @@
+---
+title: "Lab1_KatLeigh"
+author: "Kat Leigh"
+date: "1/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+library(sf)
+library(tmap)
+```
+
+## read in data
+```{r}
+sf_trees <- read_csv(here("data","sf_trees","sf_trees.csv"))
+
+#view(sf_trees)
+#names(sf_trees)
+#summary(sf_trees)
+
+```
+# ggplot review
+# counts of legal status
+```{r}
+legal_counts <- sf_trees %>%
+  group_by(legal_status) %>% 
+  summarise(tree_count = n())
+
+# get top 5
+top_5_status <- sf_trees %>% 
+  count(legal_status) %>% 
+  drop_na(legal_status) %>% 
+  rename(tree_count = n) %>% 
+  relocate(tree_count) %>% 
+  slice_max(tree_count, n = 5) %>% 
+  arrange(-tree_count)
+
+
+
+```
+# graph the top 10
+
+```{r}
+
+top_5 <- ggplot(top_5_status, aes(x= fct_reorder(legal_status, tree_count), y= tree_count))+
+  geom_col()+
+  theme_minimal()+
+  labs(x= "Legal Status",
+       y= "Tree Count")+
+  coord_flip()
+
+top_5
+
+```
+ Only keep observations where legal status is `Permitted Site` and caretaker is `MTA`. Store as permitted_mta.
+ 
+```{r}
+permitted_mta <- sf_trees %>% 
+  filter(legal_status == 'Permitted Site',
+         caretaker == 'MTA')
+
+```
+ Only keep Blackwood Acacia trees, then only keep columns `legal_status`, `date`, `latitude` and `longitude`. Store as `blackwood_acacia`.
+```{r}
+blackwood_acacia <- sf_trees %>% 
+  filter(str_detect(species, "Blackwood Acacia")) %>% 
+  select(legal_status, date, latitude, longitude)
+
+```
+graph locations roughly
+```{r}
+locations <- ggplot(blackwood_acacia, aes(x=latitude, y= longitude))+
+  geom_point()
+
+locations
+```
+Meet `tidyr::separate()
+Separate the `species` column into two separate columns: `spp_scientific` and `spp_common`
+
+```{r}
+
+separate_names_trees <- sf_trees %>% 
+  separate(species, c('spp_scientific', 'spp_common'), sep = " :: ")
+
+
+```
+Meet `tidyr::unite()`
+
+Yeah, it does the opposite. Unite the `tree_id` and `legal_status` columns, using a separator of "_COOL_" (no, you'd never actually do this...).
+
+```{r}
+unify_trees <- sf_trees %>% 
+  unite("ID_stat", tree_id:legal_status, sep = "::")
+```
+#### Stage, commit, pull, push to GitHub!
+
+part 2. Make some actual maps
+
+ convert lat/lon to spatial data (see that now there's a column called `geometry`), then we can use `geom_sf()` to plot. 
+
+**Step 1:** Convert the lat/lon to spatial points
+
+Use `st_as_sf()` to convert to spatial coordinates: 
+
+```{r}
+spatial_blackwood_acacia <- blackwood_acacia %>%
+  drop_na(latitude, longitude) %>% 
+  st_as_sf(coords = c("longitude","latitude"))
+
+# set the coordinate reference system (CRS) so it's compatible with the street map of San Francisco we'll use as a "base layer":
+
+st_crs(spatial_blackwood_acacia) = 4326
+
+# use `geom_sf`!
+
+ggplot(spatial_blackwood_acacia)+
+  geom_sf(color = "darkgreen")+
+  theme_minimal()
+
+
+
+```
+Read in the SF shapefile (data/sf_map/tl_2017_06075_roads.shp)
+
+```{r}
+
+shapefile <- read_sf(here("data","sf_map","tl_2017_06075_roads.shp"))
+
+st_transform(shapefile, 4326)
+
+ggplot(shapefile)+geom_sf()
+
+```
+combine the map w/ the tree data
+```{r}
+
+combo <- ggplot()+
+  geom_sf(data = shapefile,
+          size = .1,
+          color = "darkgrey")+
+  geom_sf(data = spatial_blackwood_acacia,
+          size = .5,
+          color = "darkgreen")+
+  theme_void()+
+  labs(title = "Blackwood acacias in San Francisco")
+
+combo
+
+```
+interactive map
+
+```{r}
+tmap_mode("view")
+
+tm_shape(spatial_blackwood_acacia) + 
+  tm_dots()
+
+```
+
+stage commit pull push! end!

@@ -1,0 +1,11 @@
+"0","library(ggpattern)
+"
+"2","
+Attaching package: ‘ggpattern’
+
+"
+"2","The following objects are masked from ‘package:ggplot2’:
+
+    flip_data, flipped_names, gg_dep, has_flipped_aes, remove_missing, should_stop, waiver
+
+"

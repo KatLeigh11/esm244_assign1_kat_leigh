@@ -1,0 +1,32 @@
+{
+    "id": "FB1B8B36",
+    "path": null,
+    "project_path": null,
+    "type": "r_dataframe",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1611209172313.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "expression": "lake_graph_data",
+        "caption": "lake_graph_data",
+        "totalObservations": 1353,
+        "displayedObservations": 1353,
+        "variables": 3,
+        "cacheKey": "7FB38AD0",
+        "object": "lake_graph_data",
+        "environment": "",
+        "contentUrl": "grid_resource/gridviewer.html?env=&obj=lake_graph_data&cache_key=7FB38AD0&max_cols=50",
+        "preview": 0
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1611207845,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1611209172313,
+    "read_only": false,
+    "read_only_alternatives": []
+}
