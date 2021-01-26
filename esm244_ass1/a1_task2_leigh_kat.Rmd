@@ -44,18 +44,25 @@ normdiffs <- normdiffs_depth_lifestage_time_param %>%
          parameter = as.factor(parameter))
 
 normdiffs_hist <- normdiffs %>% 
-  filter(time == 2)
+  filter(time == 2) %>% 
+  select(lifestage,parameter, lat, lon, norm_diff)
 
-normdiffs_fut <- normdiffs %>% 
-  filter(time == 1)
+remove("normdiffs", "normdiffs_depth_lifestage_time_param")
 
-normdiff_pca_hist <- normdiffs_hist %>%
-  dplyr::select(lat, lon, norm_diff) %>% 
+# try w/ latlon combo
+
+normdiffs_hist_combo <- normdiffs_hist %>% 
+  mutate(latlon = ((lat+180)+(lon+180)))
+
+remove("normdiffs_hist")
+
+normdiff_pca_hist_c <- normdiffs_hist_combo %>%
+  dplyr::select(latlon, norm_diff) %>% 
   scale() %>%
   prcomp()
 
-autoplot(normdiff_pca_hist,
-         data = normdiffs_hist,
+autoplot(normdiff_pca_hist_c,
+         data = normdiffs_hist_combo,
          loadings = TRUE,
          colour = as.factor('lifestage'),
          shape = 'parameter',
@@ -66,7 +73,6 @@ autoplot(normdiff_pca_hist,
          loadings.label.vjust = -0.5
          ) +  theme_minimal()
 
-# It's not perfect, but it's enough for now...
 
 # Variance explained by each PC
 screeplot(penguin_pca, type = "lines")

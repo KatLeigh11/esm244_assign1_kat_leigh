@@ -1,0 +1,23 @@
+---
+title: "website"
+author: "Kat Leigh"
+date: "1/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+remotes::install_github("rstudio/distill")
+remotes::install_github("rstudio/rmarkdown")
+install.packages("postcards")
+library(postcards)
+create_website(dir = ".", title = "mfeo", gh_pages = TRUE)
+
+```
+create a postcard
+```{r}
+create_postcard(file = "KatsWebsite.Rmd") # future name of .Rmd file
+
+```
+
