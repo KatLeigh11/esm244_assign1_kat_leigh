@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(postcards)
 library(blogdown)
 library(distill)
-create_website(dir = ".", title = "mfeo", gh_pages = TRUE)
+create_website(dir = "C:/Users/kll86/OneDrive/Documents/UCSB/esm244_assign1_kat_leigh/esm244_ass1/website", title = "mfeo", gh_pages = TRUE)
 
 ```
 create a postcard

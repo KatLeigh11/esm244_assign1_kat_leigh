@@ -1,7 +1,8 @@
 name: "."
-title: "mfeo"
+title: "KatsWebsite"
 description: |
-  mfeo
+  KatDescrip
+site: distill::distill_website
 output_dir: "docs"
 navbar:
   right:
@@ -10,3 +11,4 @@ navbar:
     - text: "About"
       href: about.html
 output: distill::distill_article
+theme: postcards.css
