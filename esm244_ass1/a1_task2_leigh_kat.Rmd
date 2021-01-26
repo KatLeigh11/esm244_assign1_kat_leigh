@@ -23,9 +23,6 @@ library(plotly)
 library(janitor)
 
 ```
-A useful descriptive introductory summary (3 - 4 sentences) that helps the audience understand the data (include a citation as necessary) and what you’ll be exploring
-All of your organized and well-annotated code (with warnings/messages suppressed) you wrote to wrangle data then run PCA, and to create a professional looking PCA biplot that appears (with a caption) in your knitted HTML
-A brief summary (nicely formatted and professionally written bulletpoints are fine) highlighting some major takeaways from your PCA that can be gleaned from the biplot
 
 This data set contains the difference between an observed (historical, from 1956 - 2020) or predicted (future, from 2010 - 2020) value for an aquatic parameter (i.e. temperature, salinity, dissolved oxygen, or pH) and an ideal value for that parameter. These ideal values were determined by averaging the values recommended by scientific literature for each life stage (i.e. egg, zoea, megalopae, juvenile, and adult) of Blue Swimming Crab (Portunus armatus, formerly Portunus pelagicus). The differences were normalized across all depths (surface, 30m, 100m, and bottom), time periods, and parameters. The question at hand is whether latitude/longitude and the normalized differences are correlated in some way to each other and/or to the parameters or life stages.
 
