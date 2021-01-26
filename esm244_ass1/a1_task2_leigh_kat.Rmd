@@ -27,12 +27,13 @@ A useful descriptive introductory summary (3 - 4 sentences) that helps the audie
 All of your organized and well-annotated code (with warnings/messages suppressed) you wrote to wrangle data then run PCA, and to create a professional looking PCA biplot that appears (with a caption) in your knitted HTML
 A brief summary (nicely formatted and professionally written bulletpoints are fine) highlighting some major takeaways from your PCA that can be gleaned from the biplot
 
+This data set contains the difference between an observed (historical, from 1956 - 2020) or predicted (future, from 2010 - 2020) value for an aquatic parameter (i.e. temperature, salinity, dissolved oxygen, or pH) and an ideal value for that parameter. These ideal values were determined by averaging the values recommended by scientific literature for each life stage (i.e. egg, zoea, megalopae, juvenile, and adult) of Blue Swimming Crab (Portunus armatus, formerly Portunus pelagicus). The differences were normalized across all depths (surface, 30m, 100m, and bottom), time periods, and parameters. The question at hand is whether latitude/longitude and the normalized differences are correlated in some way to each other and/or to the parameters or life stages.
+
 ```{r}
 # read in the data
 
 normdiffs_depth_lifestage_time_param <- read.csv("C:/Users/kll86/OneDrive/EDF internship summer 2020/NC_files/mean_alldepths_allstage_allparam_histfut_norm_diffs.csv")
 
-# This data set contains the difference between an observed (historical, from 1956 - 2020) or predicted (future, from 2010 - 2020) value for an aquatic parameter (i.e. temperature, salinity, dissolved oxygen, or pH) and an ideal value for that parameter. These ideal values were determined by averaging the values recommended by scientific literature for each life stage (i.e. egg, zoea, megalopae, juvenile, and adult) of Blue Swimming Crab (Portunus armatus, formerly Portunus pelagicus). The differences were normalized across all depths (surface, 30m, 100m, and bottom), time periods, and parameters. The question at hand is whether latitude/longitude, parameter, time period, depth, or a combination of these factors can predict these normalized differences.   
 ```
 
 ```{r}
@@ -75,9 +76,9 @@ autoplot(normdiff_pca_hist_c,
 
 
 # Variance explained by each PC
-screeplot(penguin_pca, type = "lines")
+screeplot(normdiff_pca_hist_c, type = "lines")
 
 # See the loadings (weighting for each principal component)
-penguin_pca$rotation
+normdiff_pca_hist_c$rotation
 ```
 
