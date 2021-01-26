@@ -10,7 +10,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 # load packages
 
-remotes::install_github("coolbutuseless/ggpattern")
+# remotes::install_github("coolbutuseless/ggpattern")
 library(ggpattern)
 library(tidyverse)
 library(lubridate)
@@ -24,7 +24,7 @@ library(janitor)
 
 ```
 
-This data set contains the difference between an observed (historical, from 1956 - 2020) or predicted (future, from 2010 - 2020) value for an aquatic parameter (i.e. temperature, salinity, dissolved oxygen, or pH) and an ideal value for that parameter. These ideal values were determined by averaging the values recommended by scientific literature for each life stage (i.e. egg, zoea, megalopae, juvenile, and adult) of Blue Swimming Crab (Portunus armatus, formerly Portunus pelagicus). The differences were normalized across all depths (surface, 30m, 100m, and bottom), time periods, and parameters. The question at hand is whether latitude/longitude and the normalized differences are correlated in some way to each other and/or to the parameters or life stages.
+This data set contains the difference between an observed (historical, from 1956 - 2020) or predicted (future, from 2010 - 2020) value for an aquatic parameter (i.e. temperature, salinity, dissolved oxygen, or pH) and an ideal value for that parameter. These ideal values were determined by averaging the values recommended by scientific literature for each life stage (i.e. egg, zoea, megalopae, juvenile, and adult) of Blue Swimming Crab (Portunus armatus, formerly Portunus pelagicus). The differences were normalized across all depths (surface, 30m, 100m, and bottom), time periods, and parameters. The question at hand is whether latitude/longitude and the normalized differences per parameter are correlated in some way to each other and/or to the life stages.
 
 ```{r}
 # read in the data
@@ -40,42 +40,56 @@ normdiffs_depth_lifestage_time_param <- read.csv("C:/Users/kll86/OneDrive/EDF in
 normdiffs <- normdiffs_depth_lifestage_time_param %>% 
   mutate(depth = as.numeric(depth),
          time = as.numeric(time),
-         lifestage = as.numeric(lifestage),
+         lifestage = as.factor(lifestage),
          parameter = as.factor(parameter))
 
-# only select the historical data and the life stage, parameter, normalized differences, and latitude / longitude pairs to run the analysis
+# only select the historical data and the life stage, parameter, normalized differences, and latitude / longitude pairs to run the analysis. also shrink dataset to allow local processing w/ R.
 
 normdiffs_hist <- normdiffs %>% 
-  filter(time == 2) %>% 
+  filter(time == 2,
+         lat > 15,
+         lon > 85,
+         depth == 1) %>% 
   select(lifestage,parameter, lat, lon, norm_diff)
 
 #remove the larger files to free up space
 
-remove("normdiffs", "normdiffs_depth_lifestage_time_param")
+remove("normdiffs")
 
 # combine the latitude and longitude values into a single combination value that represents both numbers. Add 180 to these values before summing to get rid of negative values.
 
 normdiffs_hist_combo <- normdiffs_hist %>% 
-  mutate(latlon = ((lat+180)+(lon+180)))
+  mutate(latlon = ((lat+180)+(lon+180))) %>% 
+  mutate(latlon = round(latlon, 0)) %>% 
+  group_by(latlon, lifestage, parameter) %>% 
+  summarise(norm_diff_new = mean(norm_diff)) %>% 
+  ungroup()
 
 #remove a large file to free up space
 
 remove("normdiffs_hist")
 
+# compare the 4 parameters by seperating the differences by parameter
+
+wider_diffs <- normdiffs_hist_combo %>% 
+  pivot_wider(names_from = parameter, values_from = norm_diff_new) %>% 
+  drop_na()
+names(wider_diffs) <- c("LatLon", "Life Stage", "DO", "pH", "Salinity", "Temperature")
+
 # Conduct a PCA. First just select the numerical inputs to compare (latlon and norm_diff). Then, scale these values. Finally run a PCA.
 
-normdiff_pca_hist_c <- normdiffs_hist_combo %>%
-  dplyr::select(latlon, norm_diff) %>% 
+normdiff_pca_hist_c <- wider_diffs %>%
+  dplyr::select(LatLon, DO, Temperature, pH, Salinity) %>% 
   scale() %>%
   prcomp()
 
-# plot the outputs of the PCA. categorize the data by parameter (shape of points) and by life stage (color). 
+# plot the outputs of the PCA. categorize the data by life stage (shape of points). 
 
-autoplot(normdiff_pca_hist_c,
-         data = normdiffs_hist_combo,
+diffs_plot <- autoplot(normdiff_pca_hist_c,
+         data = wider_diffs,
          loadings = TRUE,
-         colour = as.factor('lifestage'),
-         shape = 'parameter',
+        # shape = 'lifestage', note: this is removed because the data currently do not have any differences per life stage
+         colour = "orange",
          alpha = .2,
          loadings.label = TRUE,
          loadings.colour = "black",
@@ -83,11 +97,18 @@ autoplot(normdiff_pca_hist_c,
          loadings.label.vjust = -0.5
          ) +  theme_minimal()
 
+
+diffs_plot
+
 # Variance explained by each PC
-screeplot(normdiff_pca_hist_c, type = "lines")
+scree_diffs <- screeplot(normdiff_pca_hist_c, type = "lines")
 
 # See the loadings (weighting for each principal component)
-normdiff_pca_hist_c$rotation
+weightings <- normdiff_pca_hist_c$rotation
+
+weightings
 ```
 
-We find that there is little correlation between the normalized differences and the lat/lon. This makes sense as lat/lon is simply a random number assigned to a location on the globe and not related to the normalized differences calculated. It is interesting to note the clustering that occurs however based on categorization by parameter and by life stage. A more appropriate analysis would be to run multiple regressions since the normalized difference is the only dependent variable, and the predictor variables being tested are lat/lon, depth, parameter, and life stage.
+We find that the normalized differences of Temperature and Dissolved Oxygen are closely correlated, and that of pH and Salinity are somewhat correlated to each other as well as the combo Lat/Lon values. This has interesting implications to the relationships between these aquatic parameters to each other as well as oceanic location. Important, however, is to note the wide dispersion of the data points themselves. Trends are not very pronounced.
+
+A more appropriate analysis to examine how the normalized difference is affected would be to run multiple regressions. The predictor variables that would be tested in this case are lat/lon, depth, time, and life stage.
