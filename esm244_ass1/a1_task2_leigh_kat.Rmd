@@ -5,8 +5,8 @@ date: "1/20/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 # load packages
 
