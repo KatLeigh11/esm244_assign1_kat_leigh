@@ -38,29 +38,41 @@ normdiffs_depth_lifestage_time_param <- read.csv("C:/Users/kll86/OneDrive/EDF in
 
 ```{r}
 
+# set the proper classes for the data to run a PCA
+
 normdiffs <- normdiffs_depth_lifestage_time_param %>% 
   mutate(depth = as.numeric(depth),
          time = as.numeric(time),
          lifestage = as.numeric(lifestage),
          parameter = as.factor(parameter))
 
+# only select the historical data and the life stage, parameter, normalized differences, and latitude / longitude pairs to run the analysis
+
 normdiffs_hist <- normdiffs %>% 
   filter(time == 2) %>% 
   select(lifestage,parameter, lat, lon, norm_diff)
 
+#remove the larger files to free up space
+
 remove("normdiffs", "normdiffs_depth_lifestage_time_param")
 
-# try w/ latlon combo
+# combine the latitude and longitude values into a single combination value that represents both numbers. Add 180 to these values before summing to get rid of negative values.
 
 normdiffs_hist_combo <- normdiffs_hist %>% 
   mutate(latlon = ((lat+180)+(lon+180)))
 
+#remove a large file to free up space
+
 remove("normdiffs_hist")
+
+# Conduct a PCA. First just select the numerical inputs to compare (latlon and norm_diff). Then, scale these values. Finally run a PCA.
 
 normdiff_pca_hist_c <- normdiffs_hist_combo %>%
   dplyr::select(latlon, norm_diff) %>% 
   scale() %>%
   prcomp()
+
+# plot the outputs of the PCA. categorize the data by parameter (shape of points) and by life stage (color). 
 
 autoplot(normdiff_pca_hist_c,
          data = normdiffs_hist_combo,
@@ -74,7 +86,6 @@ autoplot(normdiff_pca_hist_c,
          loadings.label.vjust = -0.5
          ) +  theme_minimal()
 
-
 # Variance explained by each PC
 screeplot(normdiff_pca_hist_c, type = "lines")
 
@@ -82,3 +93,4 @@ screeplot(normdiff_pca_hist_c, type = "lines")
 normdiff_pca_hist_c$rotation
 ```
 
+We find that there is little correlation between the normalized differences and the lat/lon. This makes sense as lat/lon is simply a random number assigned to a location on the globe and not related to the normalized differences calculated. It is interesting to note the clustering that occurs however based on categorization by parameter and by life stage. A more appropriate analysis would be to run multiple regressions since the normalized difference is the only dependent variable, and the predictor variables being tested are lat/lon, depth, parameter, and life stage.
